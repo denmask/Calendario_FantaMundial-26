@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FantaMundial 2026 — Fantapazz League</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #FFD700;
+    --gold2: #FFA500;
+    --dark: #0a0a12;
+    --dark2: #12121e;
+    --dark3: #1a1a2e;
+    --card: #16213e;
+    --card2: #1e2a4a;
+    --accent: #e63946;
+    --accent2: #f4a261;
+    --green: #2ecc71;
+    --blue: #3a86ff;
+    --muted: #8892a4;
+    --text: #e8eaf0;
+    --border: rgba(255,215,0,0.15);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* STARS BG */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(58,134,255,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(230,57,70,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 90%, rgba(255,215,0,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  .header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2.5rem 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,215,0,0.04) 0%, transparent 100%);
+  }
+  .header-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: #0a0a12;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, var(--gold), #fff, var(--gold2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .header p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    gap: 4px;
+    padding: 0.75rem 1rem;
+    background: rgba(10,10,18,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+    background: transparent;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .nav-btn:hover { color: var(--text); border-color: var(--border); }
+  .nav-btn.active {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: #0a0a12;
+    border-color: transparent;
+  }
+
+  /* MAIN */
+  .main {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .section-sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+  }
+
+  /* MANAGER CARDS GRID */
+  .managers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .manager-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .manager-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,215,0,0.04) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .manager-card:hover::before { opacity: 1; }
+  .manager-card:hover { border-color: rgba(255,215,0,0.35); transform: translateY(-2px); }
+  .manager-card.eliminated {
+    opacity: 0.45;
+    filter: grayscale(0.7);
+  }
+  .manager-card .flag { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+  .manager-card .mname {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .manager-card .national {
+    font-size: 0.75rem;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .manager-card .national.unassigned { color: var(--muted); font-style: italic; }
+  .manager-card .elim-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+  }
+  .manager-num {
+    position: absolute;
+    top: 10px; left: 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: rgba(255,215,0,0.15);
+  }
+
+  /* SORTEGGIO NOTICE */
+  .notice-card {
+    background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,165,0,0.05));
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .notice-icon { font-size: 2rem; }
+  .notice-text h3 { color: var(--gold); font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+  .notice-text p { color: var(--muted); font-size: 0.82rem; }
+
+  /* MATCHES ROUND */
+  .round-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .round-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .round-badge.active-round {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: #0a0a12;
+    border-color: transparent;
+  }
+  .matches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .match-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .match-card:hover { border-color: rgba(255,215,0,0.3); }
+  .match-card .match-num {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .match-teams {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .match-team {
+    flex: 1;
+    text-align: center;
+  }
+  .match-team .team-flag { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+  .match-team .team-manager {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .match-team .team-national {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .match-vs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .score-display {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+  .score-sep { color: var(--muted); font-size: 1rem; }
+  .vs-label { font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; font-weight: 600; }
+  .match-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 0.85rem;
+    justify-content: center;
+  }
+  .btn-sm {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-sm:hover { background: var(--card2); border-color: rgba(255,215,0,0.3); }
+  .btn-sm.primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: #0a0a12;
+    border-color: transparent;
+  }
+  .btn-sm.danger {
+    border-color: rgba(230,57,70,0.3);
+    color: var(--accent);
+  }
+  .btn-sm.danger:hover { background: rgba(230,57,70,0.1); }
+  .match-winner-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 3px;
+  }
+  .winner-home { background: rgba(46,204,113,0.15); color: var(--green); }
+  .winner-away { background: rgba(46,204,113,0.15); color: var(--green); }
+  .winner-draw { background: rgba(255,165,0,0.12); color: var(--gold2); }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.15s ease;
+  }
+  @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+  .modal {
+    background: var(--dark2);
+    border: 1px solid rgba(255,215,0,0.25);
+    border-radius: var(--radius);
+    padding: 2rem;
+    width: 100%;
+    max-width: 440px;
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity:0 } to { transform: translateY(0); opacity:1 } }
+  .modal h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+  .modal label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .modal input, .modal select {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .modal input:focus, .modal select:focus { border-color: rgba(255,215,0,0.4); }
+  .modal select option { background: var(--dark2); }
+  .score-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .score-inputs input { width: 80px; text-align: center; margin: 0; font-size: 1.4rem; font-family: 'Bebas Neue', sans-serif; }
+  .score-inputs span { color: var(--muted); font-size: 1.2rem; }
+  .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+  }
+  .btn.confirm { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #0a0a12; }
+  .btn.confirm:hover { filter: brightness(1.1); }
+  .btn.cancel { background: var(--dark3); color: var(--muted); border: 1px solid rgba(255,255,255,0.08); }
+  .btn.cancel:hover { color: var(--text); }
+
+  /* CLASSIFICA */
+  .standings-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .standings-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .standings-table th.right { text-align: right; }
+  .standings-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.88rem;
+  }
+  .standings-table tr:hover td { background: rgba(255,215,0,0.03); }
+  .standings-table tr.eliminated-row td { opacity: 0.4; }
+  .rank-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--muted);
+    width: 32px;
+  }
+  .rank-num.top1 { color: #FFD700; }
+  .rank-num.top2 { color: #C0C0C0; }
+  .rank-num.top3 { color: #CD7F32; }
+  .standings-table .pts {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    text-align: right;
+  }
+  .standings-table .num { text-align: right; color: var(--muted); font-size: 0.82rem; }
+
+  /* BRACKET - knockout */
+  .bracket-phase {
+    margin-bottom: 3rem;
+  }
+  .bracket-phase-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .bracket-phase-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(244,162,97,0.3), transparent);
+  }
+
+  /* COUNTDOWN */
+  .countdown-card {
+    background: var(--card);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .countdown-label { font-size: 0.78rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; font-weight: 600; }
+  .countdown-grid { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .countdown-unit { text-align: center; }
+  .countdown-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .countdown-unit-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+
+  /* TABS for gironi */
+  .tab-list {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .tab-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .tab-btn.active { background: var(--card2); color: var(--gold); border-color: rgba(255,215,0,0.3); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  /* ASSIGNEMENT SELECT */
+  .assign-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .assign-row {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .assign-row .aname { flex: 1; font-size: 0.85rem; font-weight: 600; }
+  .assign-row select {
+    padding: 5px 8px;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 0.8rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    cursor: pointer;
+  }
+  .assign-row select:focus { border-color: rgba(255,215,0,0.4); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--muted);
+  }
+  .empty-state .big-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+  .empty-state p { font-size: 0.9rem; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.2); border-radius: 3px; }
+
+  /* ANIMATIONS */
+  .fade-in { animation: fadeIn 0.3s ease; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  .pulse { animation: pulse 2s infinite; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .matches-grid { grid-template-columns: 1fr; }
+    .managers-grid { grid-template-columns: repeat(2, 1fr); }
+    .assign-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ─── DATI INIZIALI ───────────────────────────────────────────
+const MANAGERS_INIT = [
+  { id: 1,  name: "Denis Mascherin" },
+  { id: 2,  name: "Kevin Di Bernardo" },
+  { id: 3,  name: "Mattia Beltrame" },
+  { id: 4,  name: "Federico Burello" },
+  { id: 5,  name: "Alex Beltrame" },
+  { id: 6,  name: "Cristian Tartaro" },
+  { id: 7,  name: "Kevin Sandri" },
+  { id: 8,  name: "Andrea Campagnolo" },
+  { id: 9,  name: "Lorenzo Moro" },
+  { id: 10, name: "Nicola Marano" },
+  { id: 11, name: "Aidan Conti" },
+  { id: 12, name: "Valentina Pozzi" },
+];
+
+const NATIONALS = [
+  { code: "ARG", name: "Argentina",  flag: "🇦🇷" },
+  { code: "BRA", name: "Brasile",    flag: "🇧🇷" },
+  { code: "BEL", name: "Belgio",     flag: "🇧🇪" },
+  { code: "CRO", name: "Croazia",    flag: "🇭🇷" },
+  { code: "FRA", name: "Francia",    flag: "🇫🇷" },
+  { code: "ENG", name: "Inghilterra",flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+  { code: "12RANK", name: "Senegal (12°Rank)", flag: "🇸🇳" },
+  { code: "MAR", name: "Marocco",    flag: "🇲🇦" },
+  { code: "OLA", name: "Olanda",     flag: "🇳🇱" },
+  { code: "POR", name: "Portogallo", flag: "🇵🇹" },
+  { code: "SPA", name: "Spagna",     flag: "🇪🇸" },
+];
+
+// Incroci Fanta FASE A GIRONI (dal PDF)
+const GIRONI_ROUNDS = [
+  {
+    label: "Giornata 1",
+    matches: [
+      { id: "g1-1", home: "BRA",    away: "MAR" },
+      { id: "g1-2", home: "GER_NPC", away: "POR", note: "GER vs POR" },  // GER non in lega, POR sì
+      { id: "g1-3", home: "OLA",    away: "BEL" },
+      { id: "g1-4", home: "SPA",    away: "12RANK" },
+      { id: "g1-5", home: "ENG",    away: "CRO" },
+      { id: "g1-6", home: "ARG",    away: "FRA" },
+    ]
+  },
+  {
+    label: "Giornata 2",
+    matches: [
+      { id: "g2-1", home: "BRA",    away: "12RANK" },
+      { id: "g2-2", home: "ENG",    away: "MAR" },
+      { id: "g2-3", home: "GER_NPC", away: "OLA", note: "GER vs OLA" },
+      { id: "g2-4", home: "BEL",    away: "CRO" },
+      { id: "g2-5", home: "SPA",    away: "ARG" },
+      { id: "g2-6", home: "FRA",    away: "POR" },
+    ]
+  },
+  {
+    label: "Giornata 3",
+    matches: [
+      { id: "g3-1", home: "GER_NPC", away: "BRA", note: "GER vs BRA" },
+      { id: "g3-2", home: "MAR",    away: "12RANK" },
+      { id: "g3-3", home: "ARG",    away: "ENG" },
+      { id: "g3-4", home: "OLA",    away: "SPA" },
+      { id: "g3-5", home: "CRO",    away: "FRA" },
+      { id: "g3-6", home: "POR",    away: "BEL" },
+    ]
+  }
+];
+
+// Fasi eliminazione — le partite vengono generate dinamicamente o si impostano manualmente
+const KO_PHASES = [
+  { id: "sedicesimi", label: "Sedicesimi di Finale", slots: 8 },
+  { id: "ottavi",     label: "Ottavi di Finale",     slots: 4 },
+  { id: "quarti",     label: "Quarti di Finale",     slots: 2 },
+  { id: "semifinali", label: "Semifinali",            slots: 2 },  // 2 partite → 4 squadre
+  { id: "finale",     label: "Finale",               slots: 1 },
+];
+
+// Storage helper
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+const load = (k, def) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch { return def; } };
+
+// ─── UTILS ───────────────────────────────────────────────────
+function getNational(code) {
+  return NATIONALS.find(n => n.code === code) || { code, name: code, flag: "🏴" };
+}
+function getManagerByNational(assignments, code) {
+  const mid = Object.entries(assignments).find(([, c]) => c === code)?.[0];
+  if (!mid) return null;
+  return MANAGERS_INIT.find(m => m.id === parseInt(mid));
+}
+
+// ─── COMPONENTI ──────────────────────────────────────────────
+
+function Countdown() {
+  const target = new Date("2026-06-11T18:00:00");
+  const [diff, setDiff] = useState(target - Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setDiff(target - Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const d = Math.max(0, diff);
+  const days  = Math.floor(d / 86400000);
+  const hours = Math.floor((d % 86400000) / 3600000);
+  const mins  = Math.floor((d % 3600000) / 60000);
+  const secs  = Math.floor((d % 60000) / 1000);
+  return (
+    <div className="countdown-card">
+      <div className="countdown-label">⚽ Mondiale USA 2026 — Inizio tra</div>
+      <div className="countdown-grid">
+        {[["Giorni", days], ["Ore", hours], ["Minuti", mins], ["Secondi", secs]].map(([label, val]) => (
+          <div className="countdown-unit" key={label}>
+            <div className="countdown-val">{String(val).padStart(2, "0")}</div>
+            <div className="countdown-unit-label">{label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ManagerCard({ manager, national, eliminated, num }) {
+  return (
+    <div className={`manager-card fade-in${eliminated ? " eliminated" : ""}`}>
+      <span className="manager-num">{num}</span>
+      {eliminated && <span className="elim-badge">ELIM.</span>}
+      <span className="flag">{national ? national.flag : "🎽"}</span>
+      <div className="mname">{manager.name}</div>
+      <div className={`national${!national ? " unassigned" : ""}`}>
+        {national ? national.name : "Da assegnare"}
+      </div>
+    </div>
+  );
+}
+
+function ScoreModal({ match, assignments, onSave, onClose }) {
+  const homeNat = getNational(match.home);
+  const awayNat = getNational(match.away);
+  const homeM = getManagerByNational(assignments, match.home);
+  const awayM = getManagerByNational(assignments, match.away);
+  const [hs, setHs] = useState(match.scoreHome ?? "");
+  const [as_, setAs] = useState(match.scoreAway ?? "");
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal">
+        <h2>📝 Inserisci Risultato</h2>
+        <div style={{display:"flex", gap:"1rem", alignItems:"center", marginBottom:"1.5rem"}}>
+          <div style={{flex:1, textAlign:"center"}}>
+            <div style={{fontSize:"2rem"}}>{homeNat.flag}</div>
+            <div style={{fontWeight:700, fontSize:"0.85rem"}}>{homeNat.name}</div>
+            {homeM && <div style={{fontSize:"0.72rem", color:"var(--muted)"}}>{homeM.name}</div>}
+          </div>
+          <div style={{fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.2rem", color:"var(--muted)"}}>VS</div>
+          <div style={{flex:1, textAlign:"center"}}>
+            <div style={{fontSize:"2rem"}}>{awayNat.flag}</div>
+            <div style={{fontWeight:700, fontSize:"0.85rem"}}>{awayNat.name}</div>
+            {awayM && <div style={{fontSize:"0.72rem", color:"var(--muted)"}}>{awayM.name}</div>}
+          </div>
+        </div>
+        <label>Risultato</label>
+        <div className="score-inputs">
+          <input type="number" min="0" max="99" value={hs} onChange={e=>setHs(e.target.value)} placeholder="0" />
+          <span>—</span>
+          <input type="number" min="0" max="99" value={as_} onChange={e=>setAs(e.target.value)} placeholder="0" />
+        </div>
+        <div className="modal-actions">
+          <button className="btn cancel" onClick={onClose}>Annulla</button>
+          <button className="btn confirm" onClick={() => {
+            if (hs === "" || as_ === "") return alert("Inserisci entrambi i punteggi");
+            onSave(parseInt(hs), parseInt(as_));
+          }}>Salva ✓</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EditMatchModal({ match, allManagers, assignments, onSave, onClose, isKO }) {
+  const [home, setHome] = useState(match.home);
+  const [away, setAway] = useState(match.away);
+  const options = NATIONALS.map(n => ({
+    value: n.code,
+    label: `${n.flag} ${n.name}`,
+  }));
+  options.push({ value: "TBD", label: "🔜 Da definire" });
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal">
+        <h2>✏️ Modifica Partita</h2>
+        <label>Nazionale Casa</label>
+        <select value={home} onChange={e=>setHome(e.target.value)}>
+          {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+        <label>Nazionale Ospite</label>
+        <select value={away} onChange={e=>setAway(e.target.value)}>
+          {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+        <div className="modal-actions">
+          <button className="btn cancel" onClick={onClose}>Annulla</button>
+          <button className="btn confirm" onClick={() => onSave(home, away)}>Salva ✓</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MatchCard({ match, assignments, onScore, onEdit, onReset }) {
+  const homeNat = getNational(match.home);
+  const awayNat = getNational(match.away);
+  const homeM = getManagerByNational(assignments, match.home);
+  const awayM = getManagerByNational(assignments, match.away);
+  const hasScore = match.scoreHome !== undefined && match.scoreAway !== undefined;
+  let winner = null;
+  if (hasScore) {
+    if (match.scoreHome > match.scoreAway) winner = "home";
+    else if (match.scoreAway > match.scoreHome) winner = "away";
+    else winner = "draw";
+  }
+  return (
+    <div className="match-card">
+      <div className="match-num">{match.note || match.id.toUpperCase()}</div>
+      <div className="match-teams">
+        <div className="match-team">
+          <span className="team-flag">{homeNat.flag}</span>
+          <div className="team-manager">{homeM ? homeM.name : "—"}</div>
+          <div className="team-national">{homeNat.name}</div>
+        </div>
+        <div className="match-vs">
+          {hasScore ? (
+            <div className="score-display">
+              <span style={{color: winner==="home" ? "var(--green)": "var(--text)"}}>{match.scoreHome}</span>
+              <span className="score-sep">—</span>
+              <span style={{color: winner==="away" ? "var(--green)": "var(--text)"}}>{match.scoreAway}</span>
+            </div>
+          ) : (
+            <div className="vs-label" style={{fontSize:"0.9rem", fontFamily:"'Bebas Neue',sans-serif", letterSpacing:"1px", color:"var(--muted)"}}>VS</div>
+          )}
+          {hasScore && (
+            <div className={`match-winner-badge ${winner === "draw" ? "winner-draw" : "winner-home"}`}>
+              {winner === "draw" ? "Pareggio" : winner === "home" ? `✓ ${homeNat.name}` : `✓ ${awayNat.name}`}
+            </div>
+          )}
+        </div>
+        <div className="match-team">
+          <span className="team-flag">{awayNat.flag}</span>
+          <div className="team-manager">{awayM ? awayM.name : "—"}</div>
+          <div className="team-national">{awayNat.name}</div>
+        </div>
+      </div>
+      <div className="match-actions">
+        <button className="btn-sm primary" onClick={onScore}>⚽ {hasScore ? "Modifica" : "Risultato"}</button>
+        <button className="btn-sm" onClick={onEdit}>✏️ Partita</button>
+        {hasScore && <button className="btn-sm danger" onClick={onReset}>✕</button>}
+      </div>
+    </div>
+  );
+}
+
+// ─── APP PRINCIPALE ───────────────────────────────────────────
+function App() {
+  const [tab, setTab] = useState("home");
+
+  // Assegnazioni nazionali: { managerId: nationalCode }
+  const [assignments, setAssignments] = useState(() => load("fanta_assignments", {}));
+
+  // Risultati gironi: { matchId: { home, away, scoreHome, scoreAway } }
+  const [gironiResults, setGironiResults] = useState(() => load("fanta_gironi", {}));
+
+  // Partite KO: { phaseId: [ {id, home, away, scoreHome?, scoreAway?} ] }
+  const [koMatches, setKoMatches] = useState(() => load("fanta_ko", {
+    sedicesimi: Array.from({length: 8}, (_, i) => ({ id: `sed-${i+1}`, home: "TBD", away: "TBD" })),
+    ottavi:     Array.from({length: 4}, (_, i) => ({ id: `ott-${i+1}`, home: "TBD", away: "TBD" })),
+    quarti:     Array.from({length: 2}, (_, i) => ({ id: `qua-${i+1}`, home: "TBD", away: "TBD" })),
+    semifinali: Array.from({length: 2}, (_, i) => ({ id: `sem-${i+1}`, home: "TBD", away: "TBD" })),
+    finale:     [{ id: "fin-1", home: "TBD", away: "TBD" }],
+  }));
+
+  // Eliminati
+  const [eliminated, setEliminated] = useState(() => load("fanta_elim", []));
+
+  // Modal state
+  const [scoreModal, setScoreModal] = useState(null);  // { matchId, phase }
+  const [editModal, setEditModal]   = useState(null);
+
+  // Gironi sub-tab
+  const [gironiTab, setGironiTab] = useState(0);
+
+  // Persist
+  useEffect(() => save("fanta_assignments", assignments), [assignments]);
+  useEffect(() => save("fanta_gironi", gironiResults), [gironiResults]);
+  useEffect(() => save("fanta_ko", koMatches), [koMatches]);
+  useEffect(() => save("fanta_elim", eliminated), [eliminated]);
+
+  // Statistiche classifica
+  const standings = MANAGERS_INIT.map(m => {
+    const nat = assignments[m.id];
+    let pts = 0, gf = 0, gs = 0, v = 0, n = 0, p = 0;
+    // punti dalle partite di gironi
+    Object.values(gironiResults).forEach(r => {
+      if (!nat) return;
+      if (r.home === nat && r.scoreHome !== undefined) {
+        gf += r.scoreHome; gs += r.scoreAway;
+        if (r.scoreHome > r.scoreAway) { pts += 3; v++; }
+        else if (r.scoreHome === r.scoreAway) { pts += 1; n++; }
+        else p++;
+      }
+      if (r.away === nat && r.scoreAway !== undefined) {
+        gf += r.scoreAway; gs += r.scoreHome;
+        if (r.scoreAway > r.scoreHome) { pts += 3; v++; }
+        else if (r.scoreAway === r.scoreHome) { pts += 1; n++; }
+        else p++;
+      }
+    });
+    // punti dalle fasi KO (vittoria = 3pt, pareggio = 1pt)
+    Object.values(koMatches).flat().forEach(r => {
+      if (!nat) return;
+      if (r.home === nat && r.scoreHome !== undefined) {
+        if (r.scoreHome > r.scoreAway) pts += 3;
+        else if (r.scoreHome === r.scoreAway) pts += 1;
+      }
+      if (r.away === nat && r.scoreAway !== undefined) {
+        if (r.scoreAway > r.scoreHome) pts += 3;
+        else if (r.scoreAway === r.scoreHome) pts += 1;
+      }
+    });
+    return { manager: m, nat, pts, gf, gs, dr: gf - gs, v, n, p, eliminated: eliminated.includes(m.id) };
+  }).sort((a, b) => b.pts - a.pts || b.dr - a.dr);
+
+  // helpers per getMatch
+  function getGironiMatch(round, matchId) {
+    const base = GIRONI_ROUNDS[round].matches.find(m => m.id === matchId);
+    const res  = gironiResults[matchId] || {};
+    return { ...base, ...res };
+  }
+  function getKoMatch(phase, id) {
+    return koMatches[phase]?.find(m => m.id === id) || {};
+  }
+
+  function saveGironiScore(matchId, sh, sa) {
+    const base = GIRONI_ROUNDS.flatMap(r => r.matches).find(m => m.id === matchId);
+    setGironiResults(prev => ({ ...prev, [matchId]: { ...base, ...prev[matchId], scoreHome: sh, scoreAway: sa } }));
+    setScoreModal(null);
+  }
+  function saveKoScore(phase, id, sh, sa) {
+    setKoMatches(prev => ({
+      ...prev,
+      [phase]: prev[phase].map(m => m.id === id ? { ...m, scoreHome: sh, scoreAway: sa } : m)
+    }));
+    setScoreModal(null);
+  }
+  function resetGironiScore(matchId) {
+    setGironiResults(prev => {
+      const n = { ...prev };
+      if (n[matchId]) { delete n[matchId].scoreHome; delete n[matchId].scoreAway; }
+      return n;
+    });
+  }
+  function resetKoScore(phase, id) {
+    setKoMatches(prev => ({
+      ...prev,
+      [phase]: prev[phase].map(m => m.id === id ? { ...m, scoreHome: undefined, scoreAway: undefined } : m)
+    }));
+  }
+  function editKoMatch(phase, id, home, away) {
+    setKoMatches(prev => ({
+      ...prev,
+      [phase]: prev[phase].map(m => m.id === id ? { ...m, home, away } : m)
+    }));
+    setEditModal(null);
+  }
+  function editGironiMatch(matchId, roundIdx, home, away) {
+    setGironiResults(prev => ({ ...prev, [matchId]: { ...prev[matchId], home, away } }));
+    setEditModal(null);
+  }
+  function toggleEliminated(mid) {
+    setEliminated(prev => prev.includes(mid) ? prev.filter(x => x !== mid) : [...prev, mid]);
+  }
+
+  // SCORE MODAL RESOLVER
+  function openScoreModal(phase, matchId, match) {
+    setScoreModal({ phase, matchId, match });
+  }
+  function saveScore(sh, sa) {
+    if (!scoreModal) return;
+    const { phase, matchId } = scoreModal;
+    if (phase === "gironi") saveGironiScore(matchId, sh, sa);
+    else saveKoScore(phase, matchId, sh, sa);
+  }
+  function resetScore() {
+    if (!scoreModal) return;
+    const { phase, matchId } = scoreModal;
+    if (phase === "gironi") resetGironiScore(matchId);
+    else resetKoScore(phase, matchId);
+    setScoreModal(null);
+  }
+
+  // Current modal match
+  const currentScoreMatch = scoreModal?.match;
+
+  // ─ RENDER ─
+  return (
+    <div>
+      {/* HEADER */}
+      <div className="header">
+        <div className="header-badge">🏆 FANTAPAZZ LEAGUE</div>
+        <h1>FantaMundial 2026</h1>
+        <p>USA · CANADA · MESSICO — 11 GIUGNO 2026</p>
+      </div>
+
+      {/* NAV */}
+      <nav className="nav">
+        {[
+          { id: "home",       label: "🏠 Home" },
+          { id: "sorteggio",  label: "🎲 Sorteggio" },
+          { id: "gironi",     label: "⚽ Fase a Gironi" },
+          { id: "knockout",   label: "🏆 Eliminazione Diretta" },
+          { id: "classifica", label: "📊 Classifica" },
+        ].map(t => (
+          <button key={t.id} className={`nav-btn${tab === t.id ? " active" : ""}`} onClick={() => setTab(t.id)}>
+            {t.label}
+          </button>
+        ))}
+      </nav>
+
+      <div className="main fade-in" key={tab}>
+
+        {/* ═══ HOME ═══ */}
+        {tab === "home" && (
+          <div>
+            <Countdown />
+            <div className="section-title">👥 I Fantallenatori</div>
+            <div className="section-sub">12 squadre in gara — sorteggio nazionali: <strong style={{color:"var(--gold)"}}>3 Aprile 2026</strong></div>
+            <div className="managers-grid">
+              {MANAGERS_INIT.map((m, i) => {
+                const nat = assignments[m.id] ? getNational(assignments[m.id]) : null;
+                return (
+                  <ManagerCard
+                    key={m.id}
+                    manager={m}
+                    national={nat}
+                    eliminated={eliminated.includes(m.id)}
+                    num={i + 1}
+                  />
+                );
+              })}
+            </div>
+            <div className="notice-card">
+              <div className="notice-icon">📅</div>
+              <div className="notice-text">
+                <h3>Sorteggio Nazionali — Venerdì 3 Aprile 2026</h3>
+                <p>Vai nella sezione <strong>Sorteggio</strong> per abbinare manualmente le nazionali ai fantallenatori dopo il draw ufficiale.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══ SORTEGGIO ═══ */}
+        {tab === "sorteggio" && (
+          <div>
+            <div className="section-title">🎲 Sorteggio Nazionali</div>
+            <div className="section-sub">Abbina ogni fantallenatore alla propria nazionale — sorteggio il 3 Aprile</div>
+            <div className="notice-card" style={{marginBottom:"1.5rem"}}>
+              <div className="notice-icon">⚠️</div>
+              <div className="notice-text">
+                <h3>Nota su 12RANK</h3>
+                <p>Il Senegal (12° Ranking) tiene il posto dell'Italia finché non è confermata la qualificazione ai Playoff Mondiali.</p>
+              </div>
+            </div>
+            <div className="assign-grid">
+              {MANAGERS_INIT.map(m => (
+                <div className="assign-row" key={m.id}>
+                  <span style={{fontSize:"1.4rem"}}>{assignments[m.id] ? getNational(assignments[m.id]).flag : "🎽"}</span>
+                  <div className="aname">{m.name}</div>
+                  <select
+                    value={assignments[m.id] || ""}
+                    onChange={e => {
+                      const v = e.target.value;
+                      setAssignments(prev => {
+                        const next = { ...prev };
+                        // rimuovi assegnazione precedente con questa nazionale
+                        Object.keys(next).forEach(k => { if (next[k] === v) delete next[k]; });
+                        if (v) next[m.id] = v;
+                        else delete next[m.id];
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">— Scegli —</option>
+                    {NATIONALS.map(n => (
+                      <option key={n.code} value={n.code} disabled={!!Object.values(assignments).includes(n.code) && assignments[m.id] !== n.code}>
+                        {n.flag} {n.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+            <div style={{display:"flex", gap:"0.75rem", flexWrap:"wrap"}}>
+              <button className="btn-sm primary" style={{padding:"10px 20px"}} onClick={() => {
+                if (window.confirm("Vuoi resettare tutti gli abbinamenti?")) setAssignments({});
+              }}>🗑️ Reset Abbinamenti</button>
+              <div style={{flex:1, display:"flex", alignItems:"center", gap:"0.5rem", fontSize:"0.82rem", color:"var(--muted)"}}>
+                {Object.keys(assignments).length}/12 abbinati
+              </div>
+            </div>
+            <div style={{marginTop:"2rem"}}>
+              <div className="section-title" style={{fontSize:"1.3rem"}}>Gestione Eliminazioni</div>
+              <div className="section-sub" style={{marginBottom:"1rem"}}>Quando una nazionale reale viene eliminata, segna qui il fantallenatore corrispondente</div>
+              <div className="assign-grid">
+                {MANAGERS_INIT.map(m => {
+                  const nat = assignments[m.id] ? getNational(assignments[m.id]) : null;
+                  const isElim = eliminated.includes(m.id);
+                  return (
+                    <div className="assign-row" key={m.id} style={isElim ? {opacity:0.5} : {}}>
+                      <span style={{fontSize:"1.4rem"}}>{nat ? nat.flag : "🎽"}</span>
+                      <div className="aname">
+                        <div style={{fontSize:"0.85rem", fontWeight:600}}>{m.name}</div>
+                        <div style={{fontSize:"0.72rem", color:"var(--muted)"}}>{nat ? nat.name : "Non assegnato"}</div>
+                      </div>
+                      <button
+                        className={`btn-sm${isElim ? " primary" : " danger"}`}
+                        onClick={() => toggleEliminated(m.id)}
+                        style={isElim ? {background:"var(--card2)", color:"var(--green)", borderColor:"var(--green)"} : {}}
+                      >
+                        {isElim ? "✓ Elim." : "Elimina"}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══ GIRONI ═══ */}
+        {tab === "gironi" && (
+          <div>
+            <div className="section-title">⚽ Fase a Gironi</div>
+            <div className="section-sub">3 giornate — 6 partite Fanta per giornata</div>
+            <div className="tab-list">
+              {GIRONI_ROUNDS.map((r, i) => (
+                <button key={i} className={`tab-btn${gironiTab === i ? " active" : ""}`} onClick={() => setGironiTab(i)}>
+                  {r.label}
+                </button>
+              ))}
+            </div>
+            {GIRONI_ROUNDS[gironiTab] && (
+              <div className="fade-in">
+                <div className="round-header">
+                  <div className="round-badge active-round">{GIRONI_ROUNDS[gironiTab].label}</div>
+                  <div style={{color:"var(--muted)", fontSize:"0.8rem"}}>6 partite</div>
+                </div>
+                <div className="matches-grid">
+                  {GIRONI_ROUNDS[gironiTab].matches.map(baseMatch => {
+                    const res = gironiResults[baseMatch.id] || {};
+                    const match = { ...baseMatch, ...res };
+                    return (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        assignments={assignments}
+                        onScore={() => openScoreModal("gironi", match.id, match)}
+                        onEdit={() => setEditModal({ type: "gironi", matchId: match.id, roundIdx: gironiTab, match })}
+                        onReset={() => resetGironiScore(match.id)}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ═══ KNOCKOUT ═══ */}
+        {tab === "knockout" && (
+          <div>
+            <div className="section-title">🏆 Eliminazione Diretta</div>
+            <div className="section-sub">Modifica gli abbinamenti e inserisci i risultati per ogni fase</div>
+            {KO_PHASES.map(phase => (
+              <div className="bracket-phase" key={phase.id}>
+                <div className="bracket-phase-title">{phase.label}</div>
+                <div className="matches-grid">
+                  {(koMatches[phase.id] || []).map(match => (
+                    <MatchCard
+                      key={match.id}
+                      match={match}
+                      assignments={assignments}
+                      onScore={() => openScoreModal(phase.id, match.id, match)}
+                      onEdit={() => setEditModal({ type: "ko", phase: phase.id, matchId: match.id, match })}
+                      onReset={() => resetKoScore(phase.id, match.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ═══ CLASSIFICA ═══ */}
+        {tab === "classifica" && (
+          <div>
+            <div className="section-title">📊 Classifica FantaMundial</div>
+            <div className="section-sub">Punti calcolati su tutte le fasi — V=3pt, N=1pt, P=0pt</div>
+            <div style={{overflowX:"auto"}}>
+              <table className="standings-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Fantallenatore</th>
+                    <th>Nazionale</th>
+                    <th className="right">Pt</th>
+                    <th className="right">V</th>
+                    <th className="right">N</th>
+                    <th className="right">P</th>
+                    <th className="right">DR</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {standings.map((s, i) => {
+                    const nat = s.nat ? getNational(s.nat) : null;
+                    return (
+                      <tr key={s.manager.id} className={s.eliminated ? "eliminated-row" : ""}>
+                        <td className={`rank-num${i===0?" top1":i===1?" top2":i===2?" top3":""}`}>{i + 1}</td>
+                        <td>
+                          <div style={{fontWeight:600, fontSize:"0.88rem"}}>{s.manager.name}</div>
+                          {s.eliminated && <span style={{fontSize:"10px", color:"var(--accent)", fontWeight:700}}>ELIMINATO</span>}
+                        </td>
+                        <td>{nat ? <span>{nat.flag} {nat.name}</span> : <span style={{color:"var(--muted)", fontSize:"0.8rem", fontStyle:"italic"}}>—</span>}</td>
+                        <td className="pts">{s.pts}</td>
+                        <td className="num">{s.v}</td>
+                        <td className="num">{s.n}</td>
+                        <td className="num">{s.p}</td>
+                        <td className="num" style={{color: s.dr > 0 ? "var(--green)" : s.dr < 0 ? "var(--accent)" : "var(--muted)"}}>
+                          {s.dr > 0 ? `+${s.dr}` : s.dr}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+      </div>
+
+      {/* SCORE MODAL */}
+      {scoreModal && currentScoreMatch && (
+        <ScoreModal
+          match={currentScoreMatch}
+          assignments={assignments}
+          onSave={saveScore}
+          onClose={() => setScoreModal(null)}
+        />
+      )}
+
+      {/* EDIT MODAL */}
+      {editModal && (
+        <EditMatchModal
+          match={editModal.match}
+          allManagers={MANAGERS_INIT}
+          assignments={assignments}
+          onSave={(home, away) => {
+            if (editModal.type === "ko") editKoMatch(editModal.phase, editModal.matchId, home, away);
+            else editGironiMatch(editModal.matchId, editModal.roundIdx, home, away);
+          }}
+          onClose={() => setEditModal(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
