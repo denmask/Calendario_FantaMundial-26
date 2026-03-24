@@ -175,6 +175,16 @@
     opacity: 0.45;
     filter: grayscale(0.7);
   }
+  /* Updated Flag Style */
+  .flag-img {
+    width: 40px;
+    height: 28px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    display: block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
   .manager-card .flag { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
   .manager-card .mname {
     font-weight: 700;
@@ -277,7 +287,7 @@
     flex: 1;
     text-align: center;
   }
-  .match-team .team-flag { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+  .match-team .team-flag-img { width: 32px; height: 22px; object-fit: cover; border-radius: 3px; display: block; margin: 0 auto 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
   .match-team .team-manager {
     font-size: 0.7rem;
     color: var(--muted);
@@ -625,17 +635,18 @@ const MANAGERS_INIT = [
 ];
 
 const NATIONALS = [
-  { code: "ARG", name: "Argentina",  flag: "🇦🇷" },
-  { code: "BRA", name: "Brasile",    flag: "🇧🇷" },
-  { code: "BEL", name: "Belgio",     flag: "🇧🇪" },
-  { code: "CRO", name: "Croazia",    flag: "🇭🇷" },
-  { code: "FRA", name: "Francia",    flag: "🇫🇷" },
-  { code: "ENG", name: "Inghilterra",flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
-  { code: "12RANK", name: "Senegal (12°Rank)", flag: "🇸🇳" },
-  { code: "MAR", name: "Marocco",    flag: "🇲🇦" },
-  { code: "OLA", name: "Olanda",     flag: "🇳🇱" },
-  { code: "POR", name: "Portogallo", flag: "🇵🇹" },
-  { code: "SPA", name: "Spagna",     flag: "🇪🇸" },
+  { code: "ARG", name: "Argentina",  flag: "https://flagcdn.com/w80/ar.png" },
+  { code: "BRA", name: "Brasile",    flag: "https://flagcdn.com/w80/br.png" },
+  { code: "BEL", name: "Belgio",     flag: "https://flagcdn.com/w80/be.png" },
+  { code: "CRO", name: "Croazia",    flag: "https://flagcdn.com/w80/hr.png" },
+  { code: "FRA", name: "Francia",    flag: "https://flagcdn.com/w80/fr.png" },
+  { code: "ENG", name: "Inghilterra",flag: "https://flagcdn.com/w80/gb-eng.png" },
+  { code: "12RANK", name: "Senegal (12°Rank)", flag: "https://flagcdn.com/w80/sn.png" },
+  { code: "MAR", name: "Marocco",    flag: "https://flagcdn.com/w80/ma.png" },
+  { code: "OLA", name: "Olanda",     flag: "https://flagcdn.com/w80/nl.png" },
+  { code: "POR", name: "Portogallo", flag: "https://flagcdn.com/w80/pt.png" },
+  { code: "SPA", name: "Spagna",     flag: "https://flagcdn.com/w80/es.png" },
+  { code: "GER_NPC", name: "Germania", flag: "https://flagcdn.com/w80/de.png" },
 ];
 
 // Incroci Fanta FASE A GIRONI (dal PDF)
@@ -644,7 +655,7 @@ const GIRONI_ROUNDS = [
     label: "Giornata 1",
     matches: [
       { id: "g1-1", home: "BRA",    away: "MAR" },
-      { id: "g1-2", home: "GER_NPC", away: "POR", note: "GER vs POR" },  // GER non in lega, POR sì
+      { id: "g1-2", home: "GER_NPC", away: "POR", note: "GER vs POR" },
       { id: "g1-3", home: "OLA",    away: "BEL" },
       { id: "g1-4", home: "SPA",    away: "12RANK" },
       { id: "g1-5", home: "ENG",    away: "CRO" },
@@ -675,12 +686,12 @@ const GIRONI_ROUNDS = [
   }
 ];
 
-// Fasi eliminazione — le partite vengono generate dinamicamente o si impostano manualmente
+// Fasi eliminazione
 const KO_PHASES = [
   { id: "sedicesimi", label: "Sedicesimi di Finale", slots: 8 },
   { id: "ottavi",     label: "Ottavi di Finale",     slots: 4 },
   { id: "quarti",     label: "Quarti di Finale",     slots: 2 },
-  { id: "semifinali", label: "Semifinali",            slots: 2 },  // 2 partite → 4 squadre
+  { id: "semifinali", label: "Semifinali",            slots: 2 },
   { id: "finale",     label: "Finale",               slots: 1 },
 ];
 
@@ -690,7 +701,7 @@ const load = (k, def) => { try { const v = localStorage.getItem(k); return v ? J
 
 // ─── UTILS ───────────────────────────────────────────────────
 function getNational(code) {
-  return NATIONALS.find(n => n.code === code) || { code, name: code, flag: "🏴" };
+  return NATIONALS.find(n => n.code === code) || { code, name: code, flag: "" };
 }
 function getManagerByNational(assignments, code) {
   const mid = Object.entries(assignments).find(([, c]) => c === code)?.[0];
@@ -732,7 +743,7 @@ function ManagerCard({ manager, national, eliminated, num }) {
     <div className={`manager-card fade-in${eliminated ? " eliminated" : ""}`}>
       <span className="manager-num">{num}</span>
       {eliminated && <span className="elim-badge">ELIM.</span>}
-      <span className="flag">{national ? national.flag : "🎽"}</span>
+      {national?.flag ? <img src={national.flag} className="flag-img" alt={national.name} /> : <span className="flag">🎽</span>}
       <div className="mname">{manager.name}</div>
       <div className={`national${!national ? " unassigned" : ""}`}>
         {national ? national.name : "Da assegnare"}
@@ -747,20 +758,20 @@ function ScoreModal({ match, assignments, onSave, onClose }) {
   const homeM = getManagerByNational(assignments, match.home);
   const awayM = getManagerByNational(assignments, match.away);
   const [hs, setHs] = useState(match.scoreHome ?? "");
-  const [as_, setAs] = useState(match.scoreAway ?? "");
+  const [as, setAs] = useState(match.scoreAway ?? "");
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal">
         <h2>📝 Inserisci Risultato</h2>
         <div style={{display:"flex", gap:"1rem", alignItems:"center", marginBottom:"1.5rem"}}>
           <div style={{flex:1, textAlign:"center"}}>
-            <div style={{fontSize:"2rem"}}>{homeNat.flag}</div>
+            {homeNat.flag && <img src={homeNat.flag} className="team-flag-img" style={{width:50, height:35, marginBottom:8}} />}
             <div style={{fontWeight:700, fontSize:"0.85rem"}}>{homeNat.name}</div>
             {homeM && <div style={{fontSize:"0.72rem", color:"var(--muted)"}}>{homeM.name}</div>}
           </div>
           <div style={{fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.2rem", color:"var(--muted)"}}>VS</div>
           <div style={{flex:1, textAlign:"center"}}>
-            <div style={{fontSize:"2rem"}}>{awayNat.flag}</div>
+            {awayNat.flag && <img src={awayNat.flag} className="team-flag-img" style={{width:50, height:35, marginBottom:8}} />}
             <div style={{fontWeight:700, fontSize:"0.85rem"}}>{awayNat.name}</div>
             {awayM && <div style={{fontSize:"0.72rem", color:"var(--muted)"}}>{awayM.name}</div>}
           </div>
@@ -769,13 +780,13 @@ function ScoreModal({ match, assignments, onSave, onClose }) {
         <div className="score-inputs">
           <input type="number" min="0" max="99" value={hs} onChange={e=>setHs(e.target.value)} placeholder="0" />
           <span>—</span>
-          <input type="number" min="0" max="99" value={as_} onChange={e=>setAs(e.target.value)} placeholder="0" />
+          <input type="number" min="0" max="99" value={as} onChange={e=>setAs(e.target.value)} placeholder="0" />
         </div>
         <div className="modal-actions">
           <button className="btn cancel" onClick={onClose}>Annulla</button>
           <button className="btn confirm" onClick={() => {
-            if (hs === "" || as_ === "") return alert("Inserisci entrambi i punteggi");
-            onSave(parseInt(hs), parseInt(as_));
+            if (hs === "" || as === "") return alert("Inserisci entrambi i punteggi");
+            onSave(parseInt(hs), parseInt(as));
           }}>Salva ✓</button>
         </div>
       </div>
@@ -788,7 +799,7 @@ function EditMatchModal({ match, allManagers, assignments, onSave, onClose, isKO
   const [away, setAway] = useState(match.away);
   const options = NATIONALS.map(n => ({
     value: n.code,
-    label: `${n.flag} ${n.name}`,
+    label: `${n.name}`,
   }));
   options.push({ value: "TBD", label: "🔜 Da definire" });
   return (
@@ -829,7 +840,7 @@ function MatchCard({ match, assignments, onScore, onEdit, onReset }) {
       <div className="match-num">{match.note || match.id.toUpperCase()}</div>
       <div className="match-teams">
         <div className="match-team">
-          <span className="team-flag">{homeNat.flag}</span>
+          {homeNat.flag && <img src={homeNat.flag} className="team-flag-img" />}
           <div className="team-manager">{homeM ? homeM.name : "—"}</div>
           <div className="team-national">{homeNat.name}</div>
         </div>
@@ -850,7 +861,7 @@ function MatchCard({ match, assignments, onScore, onEdit, onReset }) {
           )}
         </div>
         <div className="match-team">
-          <span className="team-flag">{awayNat.flag}</span>
+          {awayNat.flag && <img src={awayNat.flag} className="team-flag-img" />}
           <div className="team-manager">{awayM ? awayM.name : "—"}</div>
           <div className="team-national">{awayNat.name}</div>
         </div>
@@ -867,14 +878,8 @@ function MatchCard({ match, assignments, onScore, onEdit, onReset }) {
 // ─── APP PRINCIPALE ───────────────────────────────────────────
 function App() {
   const [tab, setTab] = useState("home");
-
-  // Assegnazioni nazionali: { managerId: nationalCode }
   const [assignments, setAssignments] = useState(() => load("fanta_assignments", {}));
-
-  // Risultati gironi: { matchId: { home, away, scoreHome, scoreAway } }
   const [gironiResults, setGironiResults] = useState(() => load("fanta_gironi", {}));
-
-  // Partite KO: { phaseId: [ {id, home, away, scoreHome?, scoreAway?} ] }
   const [koMatches, setKoMatches] = useState(() => load("fanta_ko", {
     sedicesimi: Array.from({length: 8}, (_, i) => ({ id: `sed-${i+1}`, home: "TBD", away: "TBD" })),
     ottavi:     Array.from({length: 4}, (_, i) => ({ id: `ott-${i+1}`, home: "TBD", away: "TBD" })),
@@ -882,28 +887,19 @@ function App() {
     semifinali: Array.from({length: 2}, (_, i) => ({ id: `sem-${i+1}`, home: "TBD", away: "TBD" })),
     finale:     [{ id: "fin-1", home: "TBD", away: "TBD" }],
   }));
-
-  // Eliminati
   const [eliminated, setEliminated] = useState(() => load("fanta_elim", []));
-
-  // Modal state
-  const [scoreModal, setScoreModal] = useState(null);  // { matchId, phase }
+  const [scoreModal, setScoreModal] = useState(null);
   const [editModal, setEditModal]   = useState(null);
-
-  // Gironi sub-tab
   const [gironiTab, setGironiTab] = useState(0);
 
-  // Persist
   useEffect(() => save("fanta_assignments", assignments), [assignments]);
   useEffect(() => save("fanta_gironi", gironiResults), [gironiResults]);
   useEffect(() => save("fanta_ko", koMatches), [koMatches]);
   useEffect(() => save("fanta_elim", eliminated), [eliminated]);
 
-  // Statistiche classifica
   const standings = MANAGERS_INIT.map(m => {
     const nat = assignments[m.id];
     let pts = 0, gf = 0, gs = 0, v = 0, n = 0, p = 0;
-    // punti dalle partite di gironi
     Object.values(gironiResults).forEach(r => {
       if (!nat) return;
       if (r.home === nat && r.scoreHome !== undefined) {
@@ -919,7 +915,6 @@ function App() {
         else p++;
       }
     });
-    // punti dalle fasi KO (vittoria = 3pt, pareggio = 1pt)
     Object.values(koMatches).flat().forEach(r => {
       if (!nat) return;
       if (r.home === nat && r.scoreHome !== undefined) {
@@ -933,16 +928,6 @@ function App() {
     });
     return { manager: m, nat, pts, gf, gs, dr: gf - gs, v, n, p, eliminated: eliminated.includes(m.id) };
   }).sort((a, b) => b.pts - a.pts || b.dr - a.dr);
-
-  // helpers per getMatch
-  function getGironiMatch(round, matchId) {
-    const base = GIRONI_ROUNDS[round].matches.find(m => m.id === matchId);
-    const res  = gironiResults[matchId] || {};
-    return { ...base, ...res };
-  }
-  function getKoMatch(phase, id) {
-    return koMatches[phase]?.find(m => m.id === id) || {};
-  }
 
   function saveGironiScore(matchId, sh, sa) {
     const base = GIRONI_ROUNDS.flatMap(r => r.matches).find(m => m.id === matchId);
@@ -984,7 +969,6 @@ function App() {
     setEliminated(prev => prev.includes(mid) ? prev.filter(x => x !== mid) : [...prev, mid]);
   }
 
-  // SCORE MODAL RESOLVER
   function openScoreModal(phase, matchId, match) {
     setScoreModal({ phase, matchId, match });
   }
@@ -994,28 +978,17 @@ function App() {
     if (phase === "gironi") saveGironiScore(matchId, sh, sa);
     else saveKoScore(phase, matchId, sh, sa);
   }
-  function resetScore() {
-    if (!scoreModal) return;
-    const { phase, matchId } = scoreModal;
-    if (phase === "gironi") resetGironiScore(matchId);
-    else resetKoScore(phase, matchId);
-    setScoreModal(null);
-  }
 
-  // Current modal match
   const currentScoreMatch = scoreModal?.match;
 
-  // ─ RENDER ─
   return (
     <div>
-      {/* HEADER */}
       <div className="header">
         <div className="header-badge">🏆 FANTAPAZZ LEAGUE</div>
         <h1>FantaMundial 2026</h1>
         <p>USA · CANADA · MESSICO — 11 GIUGNO 2026</p>
       </div>
 
-      {/* NAV */}
       <nav className="nav">
         {[
           { id: "home",       label: "🏠 Home" },
@@ -1032,7 +1005,6 @@ function App() {
 
       <div className="main fade-in" key={tab}>
 
-        {/* ═══ HOME ═══ */}
         {tab === "home" && (
           <div>
             <Countdown />
@@ -1062,22 +1034,14 @@ function App() {
           </div>
         )}
 
-        {/* ═══ SORTEGGIO ═══ */}
         {tab === "sorteggio" && (
           <div>
             <div className="section-title">🎲 Sorteggio Nazionali</div>
             <div className="section-sub">Abbina ogni fantallenatore alla propria nazionale — sorteggio il 3 Aprile</div>
-            <div className="notice-card" style={{marginBottom:"1.5rem"}}>
-              <div className="notice-icon">⚠️</div>
-              <div className="notice-text">
-                <h3>Nota su 12RANK</h3>
-                <p>Il Senegal (12° Ranking) tiene il posto dell'Italia finché non è confermata la qualificazione ai Playoff Mondiali.</p>
-              </div>
-            </div>
             <div className="assign-grid">
               {MANAGERS_INIT.map(m => (
                 <div className="assign-row" key={m.id}>
-                  <span style={{fontSize:"1.4rem"}}>{assignments[m.id] ? getNational(assignments[m.id]).flag : "🎽"}</span>
+                  {assignments[m.id] ? <img src={getNational(assignments[m.id]).flag} style={{width:24, borderRadius:2}} /> : <span style={{fontSize:"1.4rem"}}>🎽</span>}
                   <div className="aname">{m.name}</div>
                   <select
                     value={assignments[m.id] || ""}
@@ -1085,7 +1049,6 @@ function App() {
                       const v = e.target.value;
                       setAssignments(prev => {
                         const next = { ...prev };
-                        // rimuovi assegnazione precedente con questa nazionale
                         Object.keys(next).forEach(k => { if (next[k] === v) delete next[k]; });
                         if (v) next[m.id] = v;
                         else delete next[m.id];
@@ -1096,55 +1059,19 @@ function App() {
                     <option value="">— Scegli —</option>
                     {NATIONALS.map(n => (
                       <option key={n.code} value={n.code} disabled={!!Object.values(assignments).includes(n.code) && assignments[m.id] !== n.code}>
-                        {n.flag} {n.name}
+                        {n.name}
                       </option>
                     ))}
                   </select>
                 </div>
               ))}
             </div>
-            <div style={{display:"flex", gap:"0.75rem", flexWrap:"wrap"}}>
-              <button className="btn-sm primary" style={{padding:"10px 20px"}} onClick={() => {
-                if (window.confirm("Vuoi resettare tutti gli abbinamenti?")) setAssignments({});
-              }}>🗑️ Reset Abbinamenti</button>
-              <div style={{flex:1, display:"flex", alignItems:"center", gap:"0.5rem", fontSize:"0.82rem", color:"var(--muted)"}}>
-                {Object.keys(assignments).length}/12 abbinati
-              </div>
-            </div>
-            <div style={{marginTop:"2rem"}}>
-              <div className="section-title" style={{fontSize:"1.3rem"}}>Gestione Eliminazioni</div>
-              <div className="section-sub" style={{marginBottom:"1rem"}}>Quando una nazionale reale viene eliminata, segna qui il fantallenatore corrispondente</div>
-              <div className="assign-grid">
-                {MANAGERS_INIT.map(m => {
-                  const nat = assignments[m.id] ? getNational(assignments[m.id]) : null;
-                  const isElim = eliminated.includes(m.id);
-                  return (
-                    <div className="assign-row" key={m.id} style={isElim ? {opacity:0.5} : {}}>
-                      <span style={{fontSize:"1.4rem"}}>{nat ? nat.flag : "🎽"}</span>
-                      <div className="aname">
-                        <div style={{fontSize:"0.85rem", fontWeight:600}}>{m.name}</div>
-                        <div style={{fontSize:"0.72rem", color:"var(--muted)"}}>{nat ? nat.name : "Non assegnato"}</div>
-                      </div>
-                      <button
-                        className={`btn-sm${isElim ? " primary" : " danger"}`}
-                        onClick={() => toggleEliminated(m.id)}
-                        style={isElim ? {background:"var(--card2)", color:"var(--green)", borderColor:"var(--green)"} : {}}
-                      >
-                        {isElim ? "✓ Elim." : "Elimina"}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
           </div>
         )}
 
-        {/* ═══ GIRONI ═══ */}
         {tab === "gironi" && (
           <div>
             <div className="section-title">⚽ Fase a Gironi</div>
-            <div className="section-sub">3 giornate — 6 partite Fanta per giornata</div>
             <div className="tab-list">
               {GIRONI_ROUNDS.map((r, i) => (
                 <button key={i} className={`tab-btn${gironiTab === i ? " active" : ""}`} onClick={() => setGironiTab(i)}>
@@ -1154,10 +1081,6 @@ function App() {
             </div>
             {GIRONI_ROUNDS[gironiTab] && (
               <div className="fade-in">
-                <div className="round-header">
-                  <div className="round-badge active-round">{GIRONI_ROUNDS[gironiTab].label}</div>
-                  <div style={{color:"var(--muted)", fontSize:"0.8rem"}}>6 partite</div>
-                </div>
                 <div className="matches-grid">
                   {GIRONI_ROUNDS[gironiTab].matches.map(baseMatch => {
                     const res = gironiResults[baseMatch.id] || {};
@@ -1179,11 +1102,9 @@ function App() {
           </div>
         )}
 
-        {/* ═══ KNOCKOUT ═══ */}
         {tab === "knockout" && (
           <div>
             <div className="section-title">🏆 Eliminazione Diretta</div>
-            <div className="section-sub">Modifica gli abbinamenti e inserisci i risultati per ogni fase</div>
             {KO_PHASES.map(phase => (
               <div className="bracket-phase" key={phase.id}>
                 <div className="bracket-phase-title">{phase.label}</div>
@@ -1204,11 +1125,9 @@ function App() {
           </div>
         )}
 
-        {/* ═══ CLASSIFICA ═══ */}
         {tab === "classifica" && (
           <div>
             <div className="section-title">📊 Classifica FantaMundial</div>
-            <div className="section-sub">Punti calcolati su tutte le fasi — V=3pt, N=1pt, P=0pt</div>
             <div style={{overflowX:"auto"}}>
               <table className="standings-table">
                 <thead>
@@ -1229,18 +1148,13 @@ function App() {
                     return (
                       <tr key={s.manager.id} className={s.eliminated ? "eliminated-row" : ""}>
                         <td className={`rank-num${i===0?" top1":i===1?" top2":i===2?" top3":""}`}>{i + 1}</td>
-                        <td>
-                          <div style={{fontWeight:600, fontSize:"0.88rem"}}>{s.manager.name}</div>
-                          {s.eliminated && <span style={{fontSize:"10px", color:"var(--accent)", fontWeight:700}}>ELIMINATO</span>}
-                        </td>
-                        <td>{nat ? <span>{nat.flag} {nat.name}</span> : <span style={{color:"var(--muted)", fontSize:"0.8rem", fontStyle:"italic"}}>—</span>}</td>
+                        <td>{s.manager.name}</td>
+                        <td>{nat ? <span><img src={nat.flag} style={{width:18, marginRight:6, borderRadius:1}} />{nat.name}</span> : "—"}</td>
                         <td className="pts">{s.pts}</td>
                         <td className="num">{s.v}</td>
                         <td className="num">{s.n}</td>
                         <td className="num">{s.p}</td>
-                        <td className="num" style={{color: s.dr > 0 ? "var(--green)" : s.dr < 0 ? "var(--accent)" : "var(--muted)"}}>
-                          {s.dr > 0 ? `+${s.dr}` : s.dr}
-                        </td>
+                        <td className="num">{s.dr}</td>
                       </tr>
                     );
                   })}
@@ -1249,10 +1163,8 @@ function App() {
             </div>
           </div>
         )}
-
       </div>
 
-      {/* SCORE MODAL */}
       {scoreModal && currentScoreMatch && (
         <ScoreModal
           match={currentScoreMatch}
@@ -1262,7 +1174,6 @@ function App() {
         />
       )}
 
-      {/* EDIT MODAL */}
       {editModal && (
         <EditMatchModal
           match={editModal.match}
