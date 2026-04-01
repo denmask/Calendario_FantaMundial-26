@@ -189,7 +189,6 @@ const gm = (assign, c) => {
   return MANAGERS.find((m) => m.id == id);
 };
 
-// Calcola eliminazioni automatiche: restituisce { managerId: "NomeFase" }
 function computeKoElim(scores, koSlots, assign) {
   const map = {};
   KO_STAGES.forEach((stage) => {
@@ -852,58 +851,6 @@ function App() {
               Inserisci il risultato → la squadra perdente e il suo
               fantallenatore vengono eliminati automaticamente
             </div>
-            <div
-              style={{
-                display: "flex",
-                gap: 8,
-                flexWrap: "wrap",
-                marginBottom: "1.8rem",
-              }}
-            >
-              {[
-                ["Sedicesimi", "+2"],
-                ["Ottavi", "+3"],
-                ["Quarti", "+5"],
-                ["Semifinali", "+8"],
-                ["Finale", "+13"],
-              ].map(([l, b]) => (
-                <div
-                  key={l}
-                  style={{
-                    background: "var(--card)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 8,
-                    padding: "6px 14px",
-                    display: "flex",
-                    gap: 6,
-                    alignItems: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "'Barlow Condensed',sans-serif",
-                      fontWeight: 700,
-                      fontSize: ".8rem",
-                      color: "var(--text2)",
-                    }}
-                  >
-                    {l}
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "'Bebas Neue',sans-serif",
-                      fontSize: "1rem",
-                      color: "var(--gold)",
-                    }}
-                  >
-                    {b}
-                  </span>
-                  <span style={{ fontSize: ".7rem", color: "var(--muted)" }}>
-                    pt
-                  </span>
-                </div>
-              ))}
-            </div>
             <div className="tab-list">
               {KO_STAGES.map((s) => (
                 <button
@@ -988,7 +935,6 @@ function App() {
                     );
                   })}
                 </div>
-                {/* Riepilogo eliminati in questa fase */}
                 {(() => {
                   const label = KO_STAGE_LABELS[currentKoStage.id];
                   const elimInStage = MANAGERS.filter(
@@ -1092,10 +1038,6 @@ function App() {
         {tab === "classifica" && (
           <div>
             <div className="stitle">📊 Classifica FantaMundial</div>
-            <div className="ssub">
-              Gironi: V+3 · P+1 · Knockout: Sed.+2 · Ott.+3 · Qrt.+5 · Semi+8 ·
-              Finale+13
-            </div>
             <div style={{ overflowX: "auto" }}>
               <table className="sttable">
                 <thead>
@@ -1191,7 +1133,7 @@ function App() {
           const mH = modal._mH || (modal.h ? gm(assign, modal.h) : null);
           const mA = modal._mA || (modal.a ? gm(assign, modal.a) : null);
           const ex = scores[modal.id];
-          const isKoMatch = !modal.h; // le partite KO non hanno .h fisso
+          const isKoMatch = !modal.h;
           return (
             <div
               className="moverlay"
@@ -1232,7 +1174,6 @@ function App() {
                     {mA && <div className="mmn">{mA.name}</div>}
                   </div>
                 </div>
-                {/* Avviso solo per partite KO con entrambe le squadre selezionate */}
                 {nH.name !== "?" && nA.name !== "?" && nH.name && nA.name && (
                   <div
                     style={{
