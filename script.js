@@ -42,9 +42,9 @@ const NATS = [
     flag: "https://flagcdn.com/w80/gb-eng.png",
   },
   {
-    code: "SEN",
-    name: "Senegal (12°Rank)",
-    flag: "https://flagcdn.com/w80/sn.png",
+    code: "NOR",
+    name: "Norvegia",
+    flag: "https://flagcdn.com/w80/no.png",
   },
   {
     code: "MAR",
@@ -71,7 +71,7 @@ const ROUNDS = [
       { id: "g1-1", h: "BRA", a: "MAR" },
       { id: "g1-2", h: "GER", a: "POR" },
       { id: "g1-3", h: "NED", a: "BEL" },
-      { id: "g1-4", h: "ESP", a: "SEN" },
+      { id: "g1-4", h: "ESP", a: "NOR" },
       { id: "g1-5", h: "ENG", a: "CRO" },
       { id: "g1-6", h: "ARG", a: "FRA" },
     ],
@@ -79,11 +79,11 @@ const ROUNDS = [
   {
     label: "Giornata 2",
     matches: [
-      { id: "g2-1", h: "BRA", a: "SEN" },
+      { id: "g2-1", h: "BRA", a: "ESP" },
       { id: "g2-2", h: "ENG", a: "MAR" },
       { id: "g2-3", h: "GER", a: "NED" },
       { id: "g2-4", h: "BEL", a: "CRO" },
-      { id: "g2-5", h: "ESP", a: "ARG" },
+      { id: "g2-5", h: "NOR", a: "ARG" },
       { id: "g2-6", h: "FRA", a: "POR" },
     ],
   },
@@ -91,10 +91,10 @@ const ROUNDS = [
     label: "Giornata 3",
     matches: [
       { id: "g3-1", h: "GER", a: "BRA" },
-      { id: "g3-2", h: "MAR", a: "SEN" },
+      { id: "g3-2", h: "MAR", a: "CRO" },
       { id: "g3-3", h: "ARG", a: "ENG" },
       { id: "g3-4", h: "NED", a: "ESP" },
-      { id: "g3-5", h: "CRO", a: "FRA" },
+      { id: "g3-5", h: "NOR", a: "FRA" },
       { id: "g3-6", h: "POR", a: "BEL" },
     ],
   },
